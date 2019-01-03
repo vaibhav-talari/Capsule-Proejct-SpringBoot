@@ -1,10 +1,11 @@
 package spring.core.boot.restapi;
 
-import java.time.LocalDate;
+//import java.time.LocalDate;
 import java.util.List;
+//import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+//import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,13 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import spring.core.boot.model.ChildTask;
-import spring.core.boot.model.ParentTask;
+//import spring.core.boot.model.ParentTask;
 import spring.core.boot.service.IChildTaskService;
-import spring.core.boot.service.IParentTaskService;
+//import spring.core.boot.service.IParentTaskService;
 
 @Controller
 @RequestMapping("/child")
@@ -32,8 +33,8 @@ public class ChildTaskControlAPI {
 
 	@Autowired
 	private IChildTaskService childTaskService;
-	@Autowired
-	private IParentTaskService parentTaskService;
+	//@Autowired
+	//private IParentTaskService parentTaskService;
 
 	@GetMapping("/view-all-child-tasks")
 	public ResponseEntity<List<ChildTask>> getAllChildTaskList() {
@@ -57,7 +58,7 @@ public class ChildTaskControlAPI {
 		ResponseEntity<ChildTask> responce = null;
 
 		int childId = childTaskService.saveChildTask(childTask);
-		if (childId == -1) {
+		if (childId==-1) {
 			responce = new ResponseEntity<ChildTask>(HttpStatus.SERVICE_UNAVAILABLE);
 		} else {
 			childTask.setChildTaskID(childId);
@@ -78,8 +79,9 @@ public class ChildTaskControlAPI {
 			oldChildTask.setChildTask(newChildTask.getChildTask());
 			oldChildTask.setStartDate(newChildTask.getStartDate());
 			oldChildTask.setEndDate(newChildTask.getEndDate());
-			oldChildTask.setSeekbar(newChildTask.getSeekbar());
-			oldChildTask.setParentID(newChildTask.getParentID());
+			oldChildTask.setPriority(newChildTask.getPriority());
+			oldChildTask.setParent(newChildTask.getParent());
+			oldChildTask.setEndTask(newChildTask.isEndTask());
 			childTaskService.saveChildTask(oldChildTask);
 			response = new ResponseEntity<>(oldChildTask, HttpStatus.OK);
 		}
@@ -95,8 +97,8 @@ public class ChildTaskControlAPI {
 			resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		return resp;
 	}
-
-	// search---title
+//--------------------------------NOT REQUIRED-------------------------------------------------------------------//
+	/*// search---title
 	@GetMapping("/search-child-task-name/{name}")
 	public ResponseEntity<ChildTask> searchChildTaskWithName(@PathVariable("name") String childTask) {
 		ChildTask task = childTaskService.findChildTask(childTask);
@@ -111,10 +113,10 @@ public class ChildTaskControlAPI {
 
 	// search---taks with parent-title
 	@GetMapping("/search-child-task-parent-name/{name}")
-	public ResponseEntity<ChildTask> searchChildTaskWithParentName(@PathVariable("name") String parentTask) {
-		ParentTask searchtask = parentTaskService.findByParentTaskName(parentTask);
-		ChildTask task = childTaskService.findParentTaskID(searchtask);
-		ResponseEntity<ChildTask> responce = null;
+	public ResponseEntity<List<ChildTask>> searchChildTaskWithParentName(@PathVariable("name") String parentTask) {
+		Optional<ParentTask> searchtask = parentTaskService.findByParentTaskName(parentTask);
+		List<ChildTask> task = childTaskService.findChildTaskByParentTask(searchtask.orElse(null));
+		ResponseEntity<List<ChildTask>> responce = null;
 		if (task == null)
 			responce = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		else
@@ -149,13 +151,13 @@ public class ChildTaskControlAPI {
 	// search---taks with Priority date
 		@GetMapping("/search-child-task-priority-date")
 		public ResponseEntity<List<ChildTask>> searchChildTaskWithPriority(@RequestParam(value="priority") int seekbar) {
-			List<ChildTask> task = childTaskService.findAllChildTaskBySeekbar(seekbar);
+			List<ChildTask> task = childTaskService.findAllChildTaskByPriority(seekbar);
 			ResponseEntity<List<ChildTask>> responce = null;
 			if (task == null)
 				responce = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			else
 				responce = new ResponseEntity<>(task, HttpStatus.OK);
 			return responce;
-		}
+		}*/
 
 }

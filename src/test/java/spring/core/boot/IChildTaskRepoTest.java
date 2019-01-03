@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -54,18 +55,18 @@ public class IChildTaskRepoTest {
 		
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTask1),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(9), 7,
+						LocalDate.now().plusDays(9), 7,false,
 						parentTask1),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().plusDays(9), 30,
+						LocalDate.now().plusDays(9), 30,false,
 						parentTask2),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks3)};
 		
 		for(ChildTask child:childTasks)
@@ -109,7 +110,7 @@ public class IChildTaskRepoTest {
 	@Test
 	public void whenFindChildTaskByPriority_returnTask()
 	{
-		List<ChildTask> actual=childTaskRepo.findAllBySeekbar(7);
+		List<ChildTask> actual=childTaskRepo.findAllByPriority(7);
 		List<ChildTask> expected=Arrays.asList(childTasks[0],childTasks[1]);
 		assertThat(actual).isEqualTo(expected);
 	}
@@ -118,17 +119,17 @@ public class IChildTaskRepoTest {
 	public void whenFindParentTaskByChildtName_returnTask() 
 	{
 		ChildTask child=childTaskRepo.findByChildTask("Child Task 1_2");
-		int parentid=child.getParentID().getParentTaskID();
-		int expectedid=childTasks[1].getParentID().getParentTaskID();		
+		int parentid=child.getParent().getParentTaskID();
+		int expectedid=childTasks[1].getParent().getParentTaskID();		
 		assertThat(parentid).isEqualTo(expectedid);
 	}
 	
 	@Test
 	public void whenFindChildTaskByParentName_returnTask()
 	{
-		ParentTask parent=parentTaskRepo.findByParentTask("In memory Parent Task");
-		ChildTask actual=childTaskRepo.findByParentID(parent);
-		ChildTask expected=childTasks[4];
+		Optional<ParentTask> parent=parentTaskRepo.findByParentTask("In memory Parent Task");
+		List<ChildTask> actual=childTaskRepo.findAllByParent(parent.get());
+		List<ChildTask> expected=Arrays.asList(childTasks[4]);
 		assertThat(actual).isEqualTo(expected);
 	}
 	
@@ -136,9 +137,9 @@ public class IChildTaskRepoTest {
 	@Test
 	public void whenFindChildTaskByParentName_returnChildTaskName()
 	{
-		ParentTask parent=parentTaskRepo.findByParentTask("In memory Parent Task");
-		ChildTask actual=childTaskRepo.findByParentID(parent);
-		String childtaskname=actual.getChildTask();
+		Optional<ParentTask> parent=parentTaskRepo.findByParentTask("In memory Parent Task");
+		List<ChildTask> actual=childTaskRepo.findAllByParent(parent.get());
+		String childtaskname=actual.get(0).getChildTask();
 		ChildTask expected=childTasks[4];
 		String expectedchildtaskname=expected.getChildTask();
 		assertThat(childtaskname).isEqualTo(expectedchildtaskname);

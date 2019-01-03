@@ -15,9 +15,9 @@ public interface IChildTaskService {
 	public boolean deleteChildTask(int childTaskID);
 	
 	public ChildTask findChildTask(String title);
-	public ChildTask findParentTaskID(ParentTask parentID);
+	public List<ChildTask> findChildTaskByParentTask(ParentTask parent);
 	public List<ChildTask> findAllChildTaskByStartDate(LocalDate date);
 	public List<ChildTask> findAllChildTaskByEndDate(LocalDate date);
-	public List<ChildTask> findAllChildTaskBySeekbar(int priority);
+	public List<ChildTask> findAllChildTaskByPriority(int priority);
 
 }

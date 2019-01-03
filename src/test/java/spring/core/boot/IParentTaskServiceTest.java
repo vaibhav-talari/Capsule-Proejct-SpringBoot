@@ -1,6 +1,8 @@
-package spring.core.boot;
+/*package spring.core.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,9 +26,9 @@ public class IParentTaskServiceTest {
 	@Autowired
 	private IParentTaskService  parentTaskService;
 	
-	/*@Autowired
+	@Autowired
 	private IParentTaskRepo parentTaskRepo;	
-	*/
+	
 	@MockBean
 	private IParentTaskRepo parentTaskRepo;
 	
@@ -40,7 +42,7 @@ public class IParentTaskServiceTest {
 		
 	private ParentTask[] parentTasks;
 
-	/*@Before
+	@Before
 	public void setUp()
 	{
 		parentTasks=new ParentTask[] { 
@@ -53,7 +55,7 @@ public class IParentTaskServiceTest {
 			parentTaskRepo.save(parentTasks[i]);
 			
 		}
-	}*/
+	}
 	
 	@Before
 	public void setUp()
@@ -63,14 +65,14 @@ public class IParentTaskServiceTest {
 				new ParentTask("Finish Project"),
 				new ParentTask("Meet Manager"),
 				new ParentTask("Approve Project")};
-		Mockito.when(parentTaskRepo.findByParentTask("Meet Manager"))
+		Mockito.<Optional<ParentTask>when(parentTaskRepo.findByParentTask("Meet Manager"))
 		.thenReturn(parentTasks[2]);
 	}
 	
 	@Test
 	public void whenFindParentTask_withName() {
-		ParentTask actual=parentTaskService.findByParentTaskName("Meet Manager");
-		ParentTask expected=parentTasks[2];
+		Optional<ParentTask> actual=parentTaskService.findByParentTaskName("Meet Manager");
+		Optional<ParentTask> expected=parentTasks[2];
 		assertThat(actual).isEqualTo(expected);
 
 
@@ -79,3 +81,4 @@ public class IParentTaskServiceTest {
 	}
 
 
+*/

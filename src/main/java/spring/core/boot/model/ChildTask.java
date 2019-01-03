@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "child_task")
@@ -26,47 +26,52 @@ public class ChildTask {
 
 	private String childTask;
 
-    @JsonFormat
 	@DateTimeFormat(iso=ISO.DATE)
 	private LocalDate startDate;
     
-    @JsonFormat
 	@DateTimeFormat(iso=ISO.DATE)
 	private LocalDate endDate;
 
-	private int seekbar;
+	private int priority;
+	
+	@JsonProperty
+	private boolean endTask;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="parentTaskID")
-	private ParentTask parentID;
+	private ParentTask parent;
 
 	public ChildTask() {}
 
-	public ChildTask(int childTaskID, String childTask, LocalDate startDate, LocalDate endDate, int seekbar,
-			ParentTask parentID) {
+	public ChildTask(int childTaskID, String childTask, LocalDate startDate, LocalDate endDate, int priority,
+			boolean endTask, ParentTask parent) {
 		super();
 		this.childTaskID = childTaskID;
 		this.childTask = childTask;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.seekbar = seekbar;
-		this.parentID = parentID;
+		this.priority = priority;
+		this.endTask = endTask;
+		this.parent = parent;
 	}
-	public ChildTask(String childTask, LocalDate startDate, LocalDate endDate, int seekbar,
-			ParentTask parentID) {
+	public ChildTask(String childTask, LocalDate startDate, LocalDate endDate, int priority,
+			boolean endTask, ParentTask parent) {
 		super();
 		this.childTask = childTask;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.seekbar = seekbar;
-		this.parentID = parentID;
+		this.priority = priority;
+		this.endTask = endTask;
+		this.parent = parent;
 	}
-	public ChildTask(String childTask, LocalDate startDate, LocalDate endDate, int seekbar) {
+	public ChildTask(String childTask, LocalDate startDate, LocalDate endDate, int priority,
+			boolean endTask) {
 		super();
 		this.childTask = childTask;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.seekbar = seekbar;
+		this.priority = priority;
+		this.endTask = endTask;
 	}
 
 	public int getChildTaskID() {
@@ -101,28 +106,38 @@ public class ChildTask {
 		this.endDate = endDate;
 	}
 
-	public int getSeekbar() {
-		return seekbar;
+	public int getPriority() {
+		return priority;
 	}
 
-	public void setSeekbar(int seekbar) {
-		this.seekbar = seekbar;
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
-	public ParentTask getParentID() {
-		return parentID;
+	
+	public boolean isEndTask() {
+		return endTask;
 	}
 
-	public void setParentID(ParentTask parentID) {
-		this.parentID = parentID;
+	public void setEndTask(boolean endTask) {
+		this.endTask = endTask;
+	}
+
+	public ParentTask getParent() {
+		return parent;
+	}
+
+	public void setParent(ParentTask parent) {
+		this.parent = parent;
 	}
 
 	@Override
 	public String toString() {
 		return "ChildTask [childTaskID=" + childTaskID + ", childTask=" + childTask + ", startDate=" + startDate
-				+ ", endDate=" + endDate + ", seekbar=" + seekbar + ", parentID=" + parentID + "]";
+				+ ", endDate=" + endDate + ", priority=" + priority + ", endTask=" + endTask + ", parent=" + parent
+				+ "]";
 	}
-	
+
 	
 	
 	

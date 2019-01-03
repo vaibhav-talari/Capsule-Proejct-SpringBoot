@@ -51,28 +51,28 @@ public class IChildTaskServiceTest {
 		};		
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(9), 7,
+						LocalDate.now().plusDays(9), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().plusDays(9), 30,
+						LocalDate.now().plusDays(9), 30,false,
 						parentTasks[1]),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks[2])};
 		Mockito.when(childTaskRepo.findByChildTask("Child Task 1_1"))
 			.thenReturn(childTasks[0]);
-		Mockito.when(childTaskRepo.findByParentID(parentTasks[1]))
-			.thenReturn(childTasks[2]);
+		Mockito.when(childTaskRepo.findAllByParent(parentTasks[1]))
+			.thenReturn(Arrays.asList(childTasks[2]));
 		Mockito.when(childTaskRepo.findAllByStartDate(LocalDate.now().minusDays(7)))
 			.thenReturn(Arrays.asList(childTasks[0],childTasks[1]));
 		Mockito.when(childTaskRepo.findAllByEndDate(LocalDate.now().plusDays(1)))
 		.thenReturn(Arrays.asList(childTasks[3],childTasks[4]));
-		Mockito.when(childTaskRepo.findAllBySeekbar(7))
+		Mockito.when(childTaskRepo.findAllByPriority(7))
 		.thenReturn(Arrays.asList(childTasks[0],childTasks[1]));
 		
 		Mockito.when(childTaskRepo.findByChildTask("Child Task 2_1"))
@@ -89,9 +89,9 @@ public class IChildTaskServiceTest {
 	@Test
 	public void whenFindChildTaskByParentTaskName() {
 		ChildTask child=childTaskService.findChildTask("Child Task 2_1");
-		ParentTask parentTaskfromChildTask=child.getParentID();
-		ChildTask actual=childTaskService.findParentTaskID(parentTaskfromChildTask);
-		ChildTask expected=childTasks[2];
+		ParentTask parentTaskfromChildTask=child.getParent();
+		List<ChildTask> actual=childTaskService.findChildTaskByParentTask(parentTaskfromChildTask);
+		List<ChildTask> expected=Arrays.asList(childTasks[2]);
 		assertThat(actual).isEqualTo(expected);
 	}
 	
@@ -114,7 +114,7 @@ public class IChildTaskServiceTest {
 
 	@Test
 	public void whenFindChildTaskByPriority() {
-		List<ChildTask> actual=childTaskService.findAllChildTaskBySeekbar(7);
+		List<ChildTask> actual=childTaskService.findAllChildTaskByPriority(7);
 		List<ChildTask> expected=Arrays.asList(childTasks[0],childTasks[1]);
 		assertThat(actual).isEqualTo(expected);
 	}

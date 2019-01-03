@@ -13,9 +13,9 @@ import spring.core.boot.model.ParentTask;
 public interface IChildTaskRepo extends JpaRepository<ChildTask,Integer> {
 	
 	public ChildTask findByChildTask(String title);
-	public ChildTask findByParentID(ParentTask parentID);
+	public List<ChildTask> findAllByParent(ParentTask parent);
 	public List<ChildTask> findAllByStartDate(LocalDate date);
 	public List<ChildTask> findAllByEndDate(LocalDate date);
-	public List<ChildTask> findAllBySeekbar(int priority);
+	public List<ChildTask> findAllByPriority(int priority);
 
 }

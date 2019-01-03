@@ -2,6 +2,8 @@ package spring.core.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +52,9 @@ public class IParentTaskRepoTest {
 	@Test
 	public void whenFindParentTaskByParentTask_returnMatchingTask()
 	{
-		ParentTask actual=parentTaskRepo.findByParentTask("Meet Manager");
+		Optional<ParentTask> actual=parentTaskRepo.findByParentTask("Meet Manager");
 		ParentTask expected=parentTasks[2];
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual.get()).isEqualTo(expected);
 	}
 	
 	}

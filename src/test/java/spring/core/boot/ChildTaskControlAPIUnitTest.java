@@ -53,18 +53,18 @@ public class ChildTaskControlAPIUnitTest {
 		};		
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(9), 7,
+						LocalDate.now().plusDays(9), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().plusDays(9), 30,
+						LocalDate.now().plusDays(9), 30,false,
 						parentTasks[1]),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks[2])};		
 		
 		Mockito.when(childTaskService.viewAllChildTask())
@@ -74,14 +74,14 @@ public class ChildTaskControlAPIUnitTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$[0].childTask",is(childTasks[0].getChildTask())))
 		.andExpect(jsonPath("$[3].childTask",is(childTasks[3].getChildTask())))
-		.andExpect(jsonPath("$[2].parentID.parentTask",is(childTasks[2].getParentID().getParentTask())));
+		.andExpect(jsonPath("$[2].parentID.parentTask",is(childTasks[2].getParent().getParentTask())));
 	}
 	
 	@Test
 	public void whenGetChildTaskRequest_returnAJSON() throws Exception
 	{
 		ChildTask childTasks=new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7);	
+						LocalDate.now().plusDays(7), 7,false);	
 		
 		Mockito.when(childTaskService.viewChildTask(childTasks.getChildTaskID()))
 		.thenReturn(childTasks);
@@ -94,7 +94,7 @@ public class ChildTaskControlAPIUnitTest {
 	
 	@Test
 	public void whenChildTaskPosted() throws Exception{
-		String jsonString="{\"childTask\":\"Happy New Year\",\"seekbar\":1,\"parentID\":{\"parentTaskID\":1,\"parentTask\":\"ParentTask\"}}";//date works in postman
+		String jsonString="{\"childTask\":\"Happy New Year\",\"priority\":1,\"parent\":{\"parentTaskID\":1,\"parentTask\":\"ParentTask\"}}";//date works in postman
 
 		Mockito.when(childTaskService.saveChildTask(Mockito.any()))
 		.thenReturn(1);
@@ -121,13 +121,13 @@ public class ChildTaskControlAPIUnitTest {
 		};				
 		
 		ChildTask childTasks=new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]);
 		
 		Mockito.when(childTaskService.viewChildTask(childTasks.getChildTaskID()))
 		.thenReturn(childTasks);
 
-		String jsonString="{\"childTask\":\"Updated Meet Director\",\"parentID\":{\"parentTaskID\":2,\"parentTask\":\"Updated ChildTask\"}}";
+		String jsonString="{\"childTask\":\"Updated Meet Director\",\"parent\":{\"parentTaskID\":2,\"parentTask\":\"Updated ChildTask\"}}";
 
 		Mockito.when(parentTaskService.saveParentTask(Mockito.any()))
 		.thenReturn(0);
@@ -142,7 +142,7 @@ public class ChildTaskControlAPIUnitTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.childTaskID",is(0)))
 		.andExpect(jsonPath("$.childTask",is("Updated Meet Director")))
-		.andExpect(jsonPath("$.parentID.parentTask",is("Updated ChildTask")));		
+		.andExpect(jsonPath("$.parent.parentTask",is("Updated ChildTask")));		
 	}
 	
 	@Test
@@ -152,7 +152,7 @@ public class ChildTaskControlAPIUnitTest {
 		ParentTask parentTasks=new ParentTask("Parent Task-Create");
 	
 		ChildTask childTasks=new ChildTask("Child Task 1_1", LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks);		
 		
 		Mockito.when(childTaskService.deleteChildTask(childTasks.getChildTaskID()))
@@ -166,7 +166,7 @@ public class ChildTaskControlAPIUnitTest {
 	@Test
 	public void whenSearchChildTaskByName_returnAJSON() throws Exception {
 		ChildTask childTasks=new ChildTask("Child Task 1_1", LocalDate.now().minusDays(7),  
-				LocalDate.now().plusDays(7), 7);	
+				LocalDate.now().plusDays(7), 7,false);	
 
 		Mockito.when(childTaskService.findChildTask("Child Task 1_1"))
 		.thenReturn(childTasks);
@@ -186,13 +186,13 @@ public class ChildTaskControlAPIUnitTest {
 				new ParentTask("Parent Task-Update")
 		};
 		ChildTask childTasks=new ChildTask("Child Task 1_1", LocalDate.now().minusDays(7),  
-				LocalDate.now().plusDays(7), 7,parentTasks[1]);	
+				LocalDate.now().plusDays(7), 7,false,parentTasks[1]);	
 
-		Mockito.when(parentTaskService.findByParentTaskName("Parent Task-Read"))
-		.thenReturn(parentTasks[1]);
+		/*Mockito.when(parentTaskService.findByParentTaskName("Parent Task-Read"))
+		.thenReturn(parentTasks[1]);*/
 		
-		Mockito.when(childTaskService.findParentTaskID(parentTasks[1]))
-		.thenReturn(childTasks);
+		Mockito.when(childTaskService.findChildTaskByParentTask(parentTasks[1]))
+		.thenReturn(Arrays.asList(childTasks));
 		
 		mockmvc.perform(get("/child/search-child-task-parent-name/Parent Task-Read").contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk())
@@ -210,18 +210,18 @@ public class ChildTaskControlAPIUnitTest {
 		};
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(9), 7,
+						LocalDate.now().plusDays(9), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().plusDays(9), 30,
+						LocalDate.now().plusDays(9), 30,false,
 						parentTasks[1]),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks[2])};		
 		Mockito.when(childTaskService.findAllChildTaskByStartDate(LocalDate.now().minusDays(7)))
 		.thenReturn(Arrays.asList(childTasks[0],childTasks[1]));
@@ -243,18 +243,18 @@ public class ChildTaskControlAPIUnitTest {
 		};
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().minusDays(2), 7,
+						LocalDate.now().minusDays(2), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().minusDays(2), 30,
+						LocalDate.now().minusDays(2), 30,false,
 						parentTasks[1]),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks[2])};		
 		Mockito.when(childTaskService.findAllChildTaskByEndDate(LocalDate.now().minusDays(2)))
 		.thenReturn(Arrays.asList(childTasks[1],childTasks[2]));
@@ -275,26 +275,26 @@ public class ChildTaskControlAPIUnitTest {
 		};
 		childTasks=new ChildTask[] { 
 				new ChildTask("Child Task 1_1",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(7), 7,
+						LocalDate.now().plusDays(7), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 1_2",  LocalDate.now().minusDays(7),  
-						LocalDate.now().plusDays(9), 7,
+						LocalDate.now().plusDays(9), 7,false,
 						parentTasks[0]),
 				new ChildTask("Child Task 2_1",  LocalDate.now().minusDays(10),  
-						LocalDate.now().plusDays(9), 30,
+						LocalDate.now().plusDays(9), 30,false,
 						parentTasks[1]),
 				new ChildTask("Child Task 2_2",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1),
+						LocalDate.now().plusDays(1), 1,false),
 				new ChildTask("Child Task 2_3",  LocalDate.now().minusDays(1),  
-						LocalDate.now().plusDays(1), 1,
+						LocalDate.now().plusDays(1), 1,false,
 						parentTasks[2])};		
-		Mockito.when(childTaskService.findAllChildTaskBySeekbar(1))
+		Mockito.when(childTaskService.findAllChildTaskByPriority(1))
 		.thenReturn(Arrays.asList(childTasks[3],childTasks[4]));
 		
 		mockmvc.perform(get("/child/search-child-task-priority-date?priority=1").contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$[0].seekbar",is(childTasks[3].getSeekbar())))
-		.andExpect(jsonPath("$[1].seekbar",is(childTasks[4].getSeekbar())));
+		.andExpect(jsonPath("$[0].seekbar",is(childTasks[3].getPriority())))
+		.andExpect(jsonPath("$[1].seekbar",is(childTasks[4].getPriority())));
 
 		
 	}
