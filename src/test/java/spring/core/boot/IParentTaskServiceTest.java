@@ -1,4 +1,4 @@
-/*package spring.core.boot;
+package spring.core.boot;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,8 +26,8 @@ public class IParentTaskServiceTest {
 	@Autowired
 	private IParentTaskService  parentTaskService;
 	
-	@Autowired
-	private IParentTaskRepo parentTaskRepo;	
+	/*@Autowired
+	private IParentTaskRepo parentTaskRepo;	*/
 	
 	@MockBean
 	private IParentTaskRepo parentTaskRepo;
@@ -41,8 +41,9 @@ public class IParentTaskServiceTest {
 	}
 		
 	private ParentTask[] parentTasks;
+	private Optional<ParentTask> returnValue;
 
-	@Before
+	/*@Before
 	public void setUp()
 	{
 		parentTasks=new ParentTask[] { 
@@ -55,7 +56,7 @@ public class IParentTaskServiceTest {
 			parentTaskRepo.save(parentTasks[i]);
 			
 		}
-	}
+	}*/
 	
 	@Before
 	public void setUp()
@@ -65,14 +66,17 @@ public class IParentTaskServiceTest {
 				new ParentTask("Finish Project"),
 				new ParentTask("Meet Manager"),
 				new ParentTask("Approve Project")};
-		Mockito.<Optional<ParentTask>when(parentTaskRepo.findByParentTask("Meet Manager"))
-		.thenReturn(parentTasks[2]);
+		
+		ParentTask Value = parentTasks[2];
+		returnValue = Optional.of((ParentTask) Value);
+		Mockito.<Optional<ParentTask>>when(parentTaskRepo.findByParentTask("Meet Manager"))
+		.thenReturn(returnValue);
 	}
 	
 	@Test
 	public void whenFindParentTask_withName() {
 		Optional<ParentTask> actual=parentTaskService.findByParentTaskName("Meet Manager");
-		Optional<ParentTask> expected=parentTasks[2];
+		Optional<ParentTask> expected=returnValue;
 		assertThat(actual).isEqualTo(expected);
 
 
@@ -81,4 +85,3 @@ public class IParentTaskServiceTest {
 	}
 
 
-*/

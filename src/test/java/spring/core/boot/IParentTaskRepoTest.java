@@ -29,6 +29,7 @@ public class IParentTaskRepoTest {
 	private IParentTaskRepo parentTaskRepo;
 	
 	private ParentTask[] parentTasks;
+	private Optional<ParentTask> returnValue;
 	
 	@Before
 	public void setUp()
@@ -39,9 +40,8 @@ public class IParentTaskRepoTest {
 				new ParentTask("Meet Manager"),
 				new ParentTask("Approve Project")};
 		for(ParentTask parent:parentTasks)
-		{
 			entityManager.persist(parent);
-	}}
+	}
 	
 	@After
 	public void tearDown() {
@@ -53,7 +53,9 @@ public class IParentTaskRepoTest {
 	public void whenFindParentTaskByParentTask_returnMatchingTask()
 	{
 		Optional<ParentTask> actual=parentTaskRepo.findByParentTask("Meet Manager");
-		ParentTask expected=parentTasks[2];
+		ParentTask Value = parentTasks[2];
+		returnValue = Optional.of((ParentTask) Value);
+		Optional<ParentTask> expected=returnValue;
 		assertThat(actual.get()).isEqualTo(expected);
 	}
 	
