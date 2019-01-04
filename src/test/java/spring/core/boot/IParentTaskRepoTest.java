@@ -56,7 +56,7 @@ public class IParentTaskRepoTest {
 		ParentTask Value = parentTasks[2];
 		returnValue = Optional.of((ParentTask) Value);
 		Optional<ParentTask> expected=returnValue;
-		assertThat(actual.get()).isEqualTo(expected);
+		assertThat(actual).isEqualTo(expected);
 	}
 	
 	}

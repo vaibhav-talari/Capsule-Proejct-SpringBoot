@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import spring.core.boot.model.ChildTask;
 import spring.core.boot.model.ParentTask;
 import spring.core.boot.repository.IChildTaskRepo;
+import spring.core.boot.repository.IParentTaskRepo;
 import spring.core.boot.service.ChildTaskServiceImpl;
 import spring.core.boot.service.IChildTaskService;
 
@@ -30,6 +31,8 @@ public class IChildTaskServiceTest {
 	
 	@MockBean
 	private IChildTaskRepo childTaskRepo;
+	@MockBean
+	private IParentTaskRepo parentTaskRepo;
 	
 	@TestConfiguration
 	static class ChildTaskServiceUnitTest{
